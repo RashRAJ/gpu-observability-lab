@@ -1,0 +1,9 @@
+# Grafana Dashboards ConfigMap
+# Author: Deepak Soni
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: observability
+  labels:
+    grafana_dashboard: "1"

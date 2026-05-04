@@ -1,0 +1,18 @@
+  apiVersion: monitoring.coreos.com/v1                                                                                                                                                                                                                                                                          
+  kind: PodMonitor                                                                                                                                                                                                                                                                                              
+  metadata:                                                                                                                                                                                                                                                                                                     
+    name: dcgm-exporter                                                                                                                                                                                                                                                                                         
+    namespace: observability                                                                                                                                                                                                                                                                                       
+    labels:       
+      release: kube-prometheus-stack
+  spec:
+    namespaceSelector:
+      matchNames:
+        - observability
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: nvidia-dcgm-exporter                                                                                                                                                                                                                                                       
+    podMetricsEndpoints:                                                                                                                                                                                                                                                                                        
+      - port: metrics                                                                                                                                                                                                                                                                                           
+        path: /metrics
+        interval: 30s  

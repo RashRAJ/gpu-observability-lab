@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  creationTimestamp: "2026-03-12T15:48:19Z"
+  name: dcgm-exporter
+  namespace: observability
+  resourceVersion: "1773330499904447012"
+  uid: f9d7f7ec-aec4-4853-815e-7b97bed2f66d
+spec:
+  hard:
+    pods: "10"
+  scopeSelector:
+    matchExpressions:
+      - operator: In
+        scopeName: PriorityClass
+        values:
+          - system-node-critical
+          - system-cluster-critical

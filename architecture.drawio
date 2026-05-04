@@ -1,0 +1,216 @@
+<mxfile host="65bd71144e">
+    <diagram id="gpu-observability-arch" name="Architecture">
+        <mxGraphModel dx="2655" dy="1537" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="gcp" value="Google Cloud Platform (us-central1-a)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontStyle=1;fontSize=14;spacingTop=5;container=1;collapsible=0;arcSize=6;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="30" width="1520" height="1050" as="geometry"/>
+                </mxCell>
+                <mxCell id="gke" value="GKE Cluster (g2-standard-4 + NVIDIA L4 GPU)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;verticalAlign=top;fontStyle=1;fontSize=13;spacingTop=5;container=1;collapsible=0;arcSize=6;strokeWidth=2;dashed=1;" parent="gcp" vertex="1">
+                    <mxGeometry x="30" y="40" width="1460" height="970" as="geometry"/>
+                </mxCell>
+                <mxCell id="workloads-group" value="GPU Workload" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;fontStyle=1;fontSize=12;spacingTop=5;container=1;collapsible=0;arcSize=8;" parent="gke" vertex="1">
+                    <mxGeometry x="30" y="40" width="560" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="mistral" value="&lt;b&gt;vLLM&lt;/b&gt;&lt;br&gt;Mistral-7B-Instruct-v0.3&lt;br&gt;&lt;font color=&quot;#888888&quot;&gt;ns: mistral&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#0066cc&quot;&gt;:8000 /metrics&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;arcSize=10;" parent="workloads-group" vertex="1">
+                    <mxGeometry x="30" y="40" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="pvc-mistral" value="PVC&#xa;50GB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=8;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="workloads-group" vertex="1">
+                    <mxGeometry x="280" y="30" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pvc-label-mistral" value="mistral-7b-cache" style="text;html=1;fontSize=9;align=center;fillColor=none;strokeColor=none;" parent="workloads-group" vertex="1">
+                    <mxGeometry x="260" y="90" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="shm" value="/dev/shm&#xa;2GB" style="shape=parallelogram;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;perimeter=parallelogramPerimeter;" parent="workloads-group" vertex="1">
+                    <mxGeometry x="380" y="40" width="90" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="shm-label" value="Shared Memory" style="text;html=1;fontSize=9;align=center;fillColor=none;strokeColor=none;" parent="workloads-group" vertex="1">
+                    <mxGeometry x="365" y="90" width="120" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="monitors" value="&lt;b&gt;PodMonitor&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#888&quot;&gt;vllm-podmonitor (15s scrape)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;arcSize=12;" parent="gke" vertex="1">
+                    <mxGeometry x="80" y="260" width="280" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-mis-mon" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#9673a6;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="gke" source="mistral" target="monitors" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-mis-mon-label" value="15s" style="edgeLabel;html=1;fontSize=9;fillColor=#fff2cc;strokeColor=#d6b656;rounded=1;" parent="e-mis-mon" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2" relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="obs-ns" value="ns: observability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;verticalAlign=top;fontStyle=1;fontSize=12;spacingTop=5;container=1;collapsible=0;arcSize=6;strokeWidth=2;" parent="gke" vertex="1">
+                    <mxGeometry x="30" y="340" width="700" height="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="prometheus" value="&lt;b&gt;Prometheus&lt;/b&gt;&lt;br&gt;kube-prometheus-stack&lt;br&gt;v82.13.6" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=10;" parent="obs-ns" vertex="1">
+                    <mxGeometry x="220" y="40" width="220" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="prom-icon" value="" style="shape=image;imageAspect=0;aspect=fixed;verticalLabelPosition=bottom;labelBackgroundColor=default;imageWidth=30;imageHeight=30;image=data:image/svg+xml,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2U2NTIyYyI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgMThjLTQuNDIgMC04LTMuNTgtOC04czMuNTgtOCA4LTggOCAzLjU4IDggOC0zLjU4IDgtOCA4eiIvPjwvc3ZnPg==;" parent="obs-ns" vertex="1">
+                    <mxGeometry x="420" y="50" width="30" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="alertmanager" value="&lt;b&gt;AlertManager&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;arcSize=10;" parent="obs-ns" vertex="1">
+                    <mxGeometry x="490" y="40" width="120" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="node-exporter" value="&lt;b&gt;Node Exporter&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;arcSize=10;" parent="obs-ns" vertex="1">
+                    <mxGeometry x="490" y="80" width="120" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="ksm" value="&lt;b&gt;kube-state-metrics&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;arcSize=10;" parent="obs-ns" vertex="1">
+                    <mxGeometry x="30" y="55" width="150" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="grafana" value="&lt;b&gt;Grafana&lt;/b&gt;&lt;br&gt;:3000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;arcSize=10;fontStyle=1;" parent="obs-ns" vertex="1">
+                    <mxGeometry x="40" y="140" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="dashboards" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999;container=1;collapsible=0;arcSize=8;" parent="obs-ns" vertex="1">
+                    <mxGeometry x="30" y="220" width="640" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="dash-title" value="&lt;b&gt;Grafana Dashboards&lt;/b&gt; (ConfigMaps with grafana_dashboard=1)" style="text;html=1;fontSize=11;align=left;fillColor=none;strokeColor=none;spacingLeft=10;" parent="dashboards" vertex="1">
+                    <mxGeometry y="5" width="400" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="d2" value="LLM&#xa;Inference" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#76b900;fontColor=#ffffff;strokeColor=#4a7a00;fontSize=10;arcSize=15;" parent="dashboards" vertex="1">
+                    <mxGeometry x="15" y="35" width="100" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="d7" value="PCIe&#xa;Performance" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#76b900;fontColor=#ffffff;strokeColor=#4a7a00;fontSize=10;arcSize=15;" parent="dashboards" vertex="1">
+                    <mxGeometry x="125" y="35" width="100" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-prom-graf" value="PromQL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#6c8ebf;strokeWidth=2;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.3;exitY=1;exitDx=0;exitDy=0;" parent="obs-ns" source="prometheus" target="grafana" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-graf-dash" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#82b366;strokeWidth=1.5;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.15;entryY=0;entryDx=0;entryDy=0;" parent="obs-ns" source="grafana" target="dashboards" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-mon-prom" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#82b366;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="gke" source="monitors" target="prometheus" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="400" y="320"/>
+                            <mxPoint x="370" y="320"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dcgm-group" value="DCGM Stack (DaemonSet on GPU nodes)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;verticalAlign=top;fontStyle=1;fontSize=12;spacingTop=5;container=1;collapsible=0;arcSize=6;strokeWidth=2;" parent="gke" vertex="1">
+                    <mxGeometry x="780" y="340" width="620" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="dcgm-host" value="&lt;b&gt;nvidia-dcgm&lt;/b&gt;&lt;br&gt;Host Engine&lt;br&gt;&lt;font color=&quot;#888&quot;&gt;:5555 (privileged)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#666&quot;&gt;dcgm:4.5.2&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=10;" parent="dcgm-group" vertex="1">
+                    <mxGeometry x="30" y="40" width="200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="dcgm-exp" value="&lt;b&gt;dcgm-exporter&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#0066cc&quot;&gt;:9400/metrics&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#666&quot;&gt;dcgm-exporter:4.5.2&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#888&quot;&gt;counters.csv config&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;arcSize=10;" parent="dcgm-group" vertex="1">
+                    <mxGeometry x="310" y="40" width="200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-dcgm" value="nv-hostengine" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#9673a6;strokeWidth=2;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="dcgm-group" source="dcgm-host" target="dcgm-exp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dcgm-podmon" value="&lt;b&gt;PodMonitor&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#888&quot;&gt;30s scrape&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;arcSize=12;" parent="gke" vertex="1">
+                    <mxGeometry x="960" y="270" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-dcgm-podmon" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#82b366;strokeWidth=1.5;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="gke" source="dcgm-exp" target="dcgm-podmon" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-podmon-prom" value="GPU metrics" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#82b366;strokeWidth=2;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="gke" source="dcgm-podmon" target="prometheus" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-hw" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#76b900;strokeColor=#4a7a00;container=1;collapsible=0;arcSize=6;fontColor=#ffffff;" parent="gke" vertex="1">
+                    <mxGeometry x="780" y="550" width="620" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-title" value="&lt;font color=&quot;#ffffff&quot;&gt;&lt;b&gt;NVIDIA L4 GPU Hardware&lt;/b&gt;&lt;/font&gt;" style="text;html=1;fontSize=13;align=center;fillColor=none;strokeColor=none;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="180" y="10" width="260" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m1" value="Utilization %" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="20" y="45" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m2" value="Temperature" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="120" y="45" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m3" value="Power (W)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="220" y="45" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m4" value="Memory" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="320" y="45" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m5" value="PCIe TX/RX" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="420" y="45" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m6" value="ECC Errors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="520" y="45" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m7" value="SM/Mem Clock" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="20" y="90" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m8" value="NVLink BW" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="120" y="90" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m9" value="Throttling" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="220" y="90" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m10" value="XID Errors" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="320" y="90" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m11" value="Tensor Active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="420" y="90" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-m12" value="Retired Pages" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4a7a00;fontColor=#ffffff;strokeColor=none;fontSize=10;arcSize=20;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="520" y="90" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="gpu-driver" value="&lt;font color=&quot;#ffffff&quot;&gt;NVIDIA Drivers mounted from /home/kubernetes/bin/nvidia&lt;/font&gt;" style="text;html=1;fontSize=10;align=center;fillColor=none;strokeColor=none;" parent="gpu-hw" vertex="1">
+                    <mxGeometry x="130" y="140" width="360" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-gpu-dcgm" value="hardware counters" style="edgeStyle=orthogonalEdgeStyle;rounded=1;strokeColor=#76b900;strokeWidth=2;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="gke" source="gpu-hw" target="dcgm-host" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="rbac" value="&lt;b&gt;RBAC&lt;/b&gt;&lt;br&gt;observability-sa&lt;br&gt;ClusterRole + Binding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;arcSize=10;" parent="gke" vertex="1">
+                    <mxGeometry x="30" y="730" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="quota" value="&lt;b&gt;ResourceQuota&lt;/b&gt;&lt;br&gt;10 pods max&lt;br&gt;system-critical" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666;fontSize=10;arcSize=10;" parent="gke" vertex="1">
+                    <mxGeometry x="220" y="730" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="setup" value="&lt;b&gt;setup.sh&lt;/b&gt;&lt;br&gt;&lt;font&gt;&lt;font style=&quot;color: rgb(255, 255, 255);&quot;&gt;Interactive one-command&lt;br&gt;deployment orchestrator&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B68EE;fontColor=#ffffff;strokeColor=#5B48CE;fontSize=11;arcSize=10;" parent="gke" vertex="1">
+                    <mxGeometry x="30" y="830" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="helm" value="&lt;b&gt;Helm&lt;/b&gt;&lt;br&gt;&lt;font&gt;&lt;font style=&quot;color: rgb(255, 255, 255);&quot;&gt;kube-prometheus-stack&lt;br&gt;v82.13.6&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#7B68EE;fontColor=#ffffff;strokeColor=#5B48CE;fontSize=11;arcSize=10;" parent="gke" vertex="1">
+                    <mxGeometry x="260" y="830" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext-label" value="&lt;b&gt;External Dependencies&lt;/b&gt;" style="text;html=1;fontSize=13;align=left;fillColor=none;strokeColor=none;fontStyle=1;" parent="gcp" vertex="1">
+                    <mxGeometry x="810" y="800" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="nvcr" value="&lt;b&gt;nvcr.io (NGC)&lt;/b&gt;&lt;br&gt;DCGM images" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=10;" parent="gcp" vertex="1">
+                    <mxGeometry x="810" y="830" width="180" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="hf" value="&lt;b&gt;HuggingFace&lt;/b&gt;&lt;br&gt;Model weights&lt;br&gt;Mistral-7B-Instruct-v0.3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;arcSize=10;" parent="gcp" vertex="1">
+                    <mxGeometry x="1010" y="830" width="180" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#999;container=1;collapsible=0;arcSize=6;" parent="gcp" vertex="1">
+                    <mxGeometry x="810" y="925" width="580" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg-title" value="&lt;b&gt;Legend&lt;/b&gt;" style="text;html=1;fontSize=11;align=left;fillColor=none;strokeColor=none;" parent="legend" vertex="1">
+                    <mxGeometry x="5" y="5" width="60" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg1" value="" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=1;" parent="legend" vertex="1">
+                    <mxGeometry x="10" y="30" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg1t" value="LLM Workload" style="text;html=1;fontSize=9;fillColor=none;strokeColor=none;" parent="legend" vertex="1">
+                    <mxGeometry x="35" y="28" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg2" value="" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=1;" parent="legend" vertex="1">
+                    <mxGeometry x="120" y="30" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg2t" value="Monitoring" style="text;html=1;fontSize=9;fillColor=none;strokeColor=none;" parent="legend" vertex="1">
+                    <mxGeometry x="145" y="28" width="70" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg3" value="" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=1;" parent="legend" vertex="1">
+                    <mxGeometry x="220" y="30" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg3t" value="Prometheus Stack" style="text;html=1;fontSize=9;fillColor=none;strokeColor=none;" parent="legend" vertex="1">
+                    <mxGeometry x="245" y="28" width="90" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg4" value="" style="rounded=1;fillColor=#76b900;strokeColor=#4a7a00;fontSize=1;" parent="legend" vertex="1">
+                    <mxGeometry x="340" y="30" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg4t" value="GPU / NVIDIA" style="text;html=1;fontSize=9;fillColor=none;strokeColor=none;" parent="legend" vertex="1">
+                    <mxGeometry x="365" y="28" width="80" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg5" value="" style="rounded=1;fillColor=#7B68EE;strokeColor=#5B48CE;fontSize=1;" parent="legend" vertex="1">
+                    <mxGeometry x="450" y="30" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg5t" value="IaC / Tooling" style="text;html=1;fontSize=9;fillColor=none;strokeColor=none;" parent="legend" vertex="1">
+                    <mxGeometry x="475" y="28" width="80" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

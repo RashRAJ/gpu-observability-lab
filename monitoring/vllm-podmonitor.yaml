@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: vllm-mistral
+  namespace: observability
+  labels:
+    release: kube-prometheus-stack
+spec:
+  namespaceSelector:
+    matchNames:
+      - mistral
+  selector:
+    matchLabels:
+      app: mistral-7b
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
